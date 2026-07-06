@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+
+  body {
+    @apply bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-slate-200/60 bg-white/80 backdrop-blur-md shadow-xl
+           dark:bg-slate-900/60 dark:border-slate-700/50 p-6;
+  }
+
+  .btn-primary {
+    @apply px-4 py-2 rounded-xl font-medium text-white
+           bg-yellow-600 hover:bg-yellow-700 active:bg-yellow-800
+           shadow-sm transition;
+  }
+
+  .btn-success {
+    @apply px-4 py-2 rounded-xl font-medium text-white
+           bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800
+           shadow-sm transition;
+  }
+
+  .btn-danger {
+    @apply px-4 py-2 rounded-xl font-medium text-white
+           bg-rose-600 hover:bg-rose-700 active:bg-rose-800
+           shadow-sm transition;
+  }
+
+  .btn-outline {
+    @apply px-4 py-2 rounded-xl font-medium
+           border border-slate-300 text-slate-700 hover:bg-slate-50
+           dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800
+           transition;
+  }
+
+  .btn-ghost {
+    @apply px-3 py-2 rounded-xl font-medium
+           text-slate-700 hover:bg-slate-100
+           dark:text-slate-200 dark:hover:bg-slate-800
+           transition;
+  }
+}
