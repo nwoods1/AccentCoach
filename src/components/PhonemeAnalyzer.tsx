@@ -75,97 +75,101 @@ export default function PhonemeAnalyzer() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
-      <div className="rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 p-6">
-        <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Phoneme Analyzer</h2>
-        <p className="text-slate-600 dark:text-slate-300 mt-2">
-          Record a sentence to see which words and vowel sounds might need adjustment.
-        </p>
-
-        {/* Sentence picker */}
-        <div className="mt-4 space-y-3">
-          <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Choose a preset
-          </label>
-          <select
-            value={sentence}
-            onChange={(e) => setSentence(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/60 px-3 py-2"
-          >
-            {PRESET_SENTENCES.map((s, i) => (
-              <option key={i} value={s}>{s}</option>
-            ))}
-          </select>
-
-          <div className="text-xs text-slate-500 dark:text-slate-400">or enter your own</div>
-          <input
-            value={custom}
-            onChange={(e) => setCustom(e.target.value)}
-            placeholder="Type your custom sentence (optional)"
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/60 px-3 py-2"
-          />
+    <div className="page">
+      <div className="page-container max-w-3xl">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            Phoneme Analyzer
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-0.5">
+            Record a sentence to see which words and vowel sounds might need adjustment.
+          </p>
         </div>
 
-        {/* Controls */}
-        <div className="mt-5 flex gap-3">
-          <button
-            onClick={isRecording ? stop : start}
-            className={
-              "flex-1 rounded-xl px-4 py-2 font-medium text-white transition " +
-              (isRecording
-                ? "bg-red-500 hover:bg-red-600"
-                : "bg-indigo-600 hover:bg-indigo-700")
-            }
-            disabled={loading}
-          >
-            {isRecording ? "Stop Recording" : "Start Recording"}
-          </button>
+        <div className="card">
+          {/* Sentence picker */}
+          <div className="space-y-3">
+            <div>
+              <label className="field-label">Choose a preset</label>
+              <select
+                value={sentence}
+                onChange={(e) => setSentence(e.target.value)}
+                className="input"
+              >
+                {PRESET_SENTENCES.map((s, i) => (
+                  <option key={i} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
 
-          <button
-            onClick={() => {
-              setResp(null);
-              setItems(null);
-              setAudioURL(null);
-              setError(null);
-            }}
-            className="rounded-xl px-4 py-2 font-medium border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60"
-            disabled={loading || isRecording}
-          >
-            Clear
-          </button>
+            <div>
+              <label className="field-label">Or enter your own</label>
+              <input
+                value={custom}
+                onChange={(e) => setCustom(e.target.value)}
+                placeholder="Type your custom sentence (optional)"
+                className="input"
+              />
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="mt-5 flex gap-3">
+            <button
+              onClick={isRecording ? stop : start}
+              className={isRecording ? 'btn-danger flex-1' : 'btn-primary flex-1'}
+              disabled={loading}
+            >
+              {isRecording ? "Stop Recording" : "Start Recording"}
+            </button>
+
+            <button
+              onClick={() => {
+                setResp(null);
+                setItems(null);
+                setAudioURL(null);
+                setError(null);
+              }}
+              className="btn-outline"
+              disabled={loading || isRecording}
+            >
+              Clear
+            </button>
+          </div>
+
+          {/* Playback */}
+          {audioURL && (
+            <div className="mt-6">
+              <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Playback</h3>
+              <audio controls className="w-full" src={audioURL} />
+            </div>
+          )}
+
+          {/* Status / Errors */}
+          {loading && (
+            <div className="mt-4 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+              <span className="h-3.5 w-3.5 rounded-full border-2 border-slate-300 border-t-brand-500 animate-spin" />
+              Analyzing…
+            </div>
+          )}
+          {error && <div className="alert-danger mt-4">{error}</div>}
+
+          {/* Results */}
+          {resp && !loading && (
+            <>
+              {!resp.available || resp.word_feedback?.available === false ? (
+                <div className="alert-warning mt-4">
+                  Detailed phoneme analysis isn&rsquo;t available. Make sure the server has{' '}
+                  <code className="mx-1 px-1 py-0.5 rounded bg-black/5 dark:bg-white/10">g2p_en</code>,
+                  <code className="mx-1 px-1 py-0.5 rounded bg-black/5 dark:bg-white/10">praat-parselmouth</code>, and
+                  <code className="mx-1 px-1 py-0.5 rounded bg-black/5 dark:bg-white/10">ffmpeg</code> set up.
+                </div>
+              ) : (
+                <PhonemeFeedback items={items || []} />
+              )}
+            </>
+          )}
         </div>
-
-        {/* Playback */}
-        {audioURL && (
-          <div className="mt-4">
-            <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Playback</h3>
-            <audio controls className="w-full" src={audioURL} />
-          </div>
-        )}
-
-        {/* Status / Errors */}
-        {loading && <div className="mt-3 text-sm text-slate-500">Analyzing…</div>}
-        {error && (
-          <div className="mt-3 text-sm rounded-lg bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-700 text-rose-800 dark:text-rose-200 p-3">
-            {error}
-          </div>
-        )}
-
-        {/* Results */}
-        {resp && !loading && (
-          <>
-            {!resp.available || resp.word_feedback?.available === false ? (
-              <div className="mt-4 rounded-xl border bg-amber-50/70 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700 p-4 text-amber-900 dark:text-amber-100">
-                Detailed phoneme analysis isn’t available. Make sure the server has
-                <code className="mx-1">g2p_en</code>,
-                <code className="mx-1">praat-parselmouth</code>, and
-                <code className="mx-1">ffmpeg</code> set up.
-              </div>
-            ) : (
-              <PhonemeFeedback items={items || []} />
-            )}
-          </>
-        )}
       </div>
     </div>
   );

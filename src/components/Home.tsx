@@ -109,14 +109,14 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950">
-      <div className="max-w-5xl mx-auto px-4 py-10">
+    <div className="page">
+      <div className="page-container">
 
         {/* Guest banner */}
         {isGuest && (
-          <div className="mb-4 rounded-lg border border-amber-300 bg-amber-50 text-amber-900 px-4 py-2
-                          dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-200">
-            Guest mode: progress won’t be saved.
+          <div className="alert-warning mb-6 flex items-center gap-2">
+            <span aria-hidden>👤</span>
+            Guest mode: progress won&rsquo;t be saved.
           </div>
         )}
 
@@ -125,14 +125,14 @@ const Home: React.FC = () => {
           <img
             src={Parrot}
             alt="Accent Coach mascot"
-            className="hidden sm:block w-24 md:w-32 lg:w-40 h-auto drop-shadow-[0_8px_24px_rgba(0,0,0,0.25)]"
+            className="hidden sm:block w-16 md:w-20 h-16 md:h-20 rounded-2xl object-cover object-top shadow-soft ring-1 ring-slate-200 dark:ring-slate-800"
             loading="eager"
           />
           <div>
-            <h1 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-slate-100">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
               Welcome back <span className="align-middle">👋</span>
             </h1>
-            <p className="text-slate-600 dark:text-slate-300">
+            <p className="text-slate-500 dark:text-slate-400 mt-0.5">
               Track your progress and jump back into practice.
             </p>
           </div>
@@ -140,36 +140,47 @@ const Home: React.FC = () => {
 
         <div className="grid md:grid-cols-3 gap-6">
           {/* Summary card */}
-          <div className="md:col-span-1 rounded-2xl border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 p-6">
-            <div className="text-sm text-slate-500 dark:text-slate-400 mb-2">Overall</div>
+          <div className="md:col-span-1 card flex flex-col">
+            <div className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Overall</div>
             <div className="text-4xl font-bold text-slate-900 dark:text-slate-100">
-              {completedCount}/{LEVELS_TOTAL}
+              {completedCount}<span className="text-slate-400 dark:text-slate-500">/{LEVELS_TOTAL}</span>
             </div>
             <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">levels completed</div>
+
+            <div className="mt-3 h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-brand-500 transition-all"
+                style={{ width: `${(completedCount / LEVELS_TOTAL) * 100}%` }}
+              />
+            </div>
 
             {progress.lastResult && !isGuest && (
               <div className="mt-4 text-sm text-slate-600 dark:text-slate-300">
                 Last result:{' '}
-                <span className="font-medium">{progress.lastResult}</span>
+                <span className="font-semibold">{progress.lastResult}</span>
                 {typeof progress.lastConfidence === 'number' &&
                   ` (${Math.round(progress.lastConfidence * 100)}%)`}
               </div>
             )}
 
-            <div className="mt-6 space-y-3">
+            <div className="mt-6 space-y-2.5">
               <Link
                 to={`/practice?level=${resumeLevel}`}
                 onClick={handleStart}
-                className="btn-primary w-full inline-flex items-center justify-center"
+                className="btn-primary w-full"
               >
                 {completedCount === 0 ? 'Start practicing' : `Continue at Level ${resumeLevel + 1}`}
+              </Link>
+
+              <Link to="/analyze" className="btn-outline w-full">
+                Try phoneme analyzer
               </Link>
 
               {!isGuest && (
                 <button
                   onClick={handleReset}
                   disabled={resetting}
-                  className="w-full inline-flex items-center justify-center rounded-md border border-slate-300 dark:border-slate-700 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="btn-ghost w-full"
                 >
                   {resetting ? 'Resetting…' : 'Reset progress'}
                 </button>
@@ -178,45 +189,67 @@ const Home: React.FC = () => {
           </div>
 
           {/* Roadmap (5 levels) */}
-          <div className="md:col-span-2 rounded-2xl border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 p-6">
-            <div className="text-sm text-slate-500 dark:text-slate-400 mb-4">Your roadmap</div>
+          <div className="md:col-span-2 card">
+            <div className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-5">Your roadmap</div>
 
-            <ol className="relative ms-4">
+            <ol className="relative">
               {Array.from({ length: LEVELS_TOTAL }).map((_, i) => {
                 const passed = progress.levels[i];
                 const isUpNext = !passed && !progress.completed && i === firstUnpassed;
                 const isLocked = !passed && i > firstUnpassed;
+                const isLast = i === LEVELS_TOTAL - 1;
 
                 return (
-                  <li key={i} className="mb-8">
-                    <div className="absolute -left-4 mt-1 h-5 w-5 rounded-full flex items-center justify-center ring-2 ring-slate-300 dark:ring-slate-700 bg-slate-200 dark:bg-slate-800">
+                  <li key={i} className="relative pl-10 pb-8 last:pb-0">
+                    {!isLast && (
+                      <span
+                        className={[
+                          'absolute left-[15px] top-7 bottom-0 w-0.5',
+                          passed ? 'bg-emerald-400 dark:bg-emerald-600' : 'bg-slate-200 dark:bg-slate-700',
+                        ].join(' ')}
+                        aria-hidden
+                      />
+                    )}
+                    <div
+                      className={[
+                        'absolute left-0 top-0 h-8 w-8 rounded-full flex items-center justify-center ring-4 ring-white dark:ring-slate-900',
+                        passed
+                          ? 'bg-emerald-500'
+                          : isUpNext
+                          ? 'bg-brand-500'
+                          : 'bg-slate-200 dark:bg-slate-700',
+                      ].join(' ')}
+                    >
                       {passed ? (
-                        <svg viewBox="0 0 24 24" className="h-4 w-4 text-emerald-500">
+                        <svg viewBox="0 0 24 24" className="h-4 w-4 text-white">
                           <path fill="currentColor" d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z" />
                         </svg>
-                      ) : isUpNext ? (
-                        <span className="block h-2.5 w-2.5 rounded-full bg-yellow-500" />
                       ) : (
-                        <span className="block h-2.5 w-2.5 rounded-full bg-slate-400 dark:bg-slate-600" />
+                        <span
+                          className={[
+                            'text-xs font-bold',
+                            isUpNext ? 'text-white' : 'text-slate-500 dark:text-slate-400',
+                          ].join(' ')}
+                        >
+                          {i + 1}
+                        </span>
                       )}
                     </div>
-                    <div className="ms-4">
-                      <div className="flex items-center justify-between">
-                        <div className="font-medium text-slate-900 dark:text-slate-100">
-                          Level {i + 1}
-                        </div>
-                        <div
-                          className={
-                            passed
-                              ? 'text-emerald-600 dark:text-emerald-400 text-sm'
-                              : isUpNext
-                              ? 'text-yellow-500 text-sm'
-                              : 'text-slate-500 dark:text-slate-400 text-sm'
-                          }
-                        >
-                          {passed ? 'Completed' : isUpNext ? 'Up next' : isLocked ? 'Locked' : ''}
-                        </div>
+                    <div className="flex items-center justify-between pt-1">
+                      <div className="font-semibold text-slate-900 dark:text-slate-100">
+                        Level {i + 1}
                       </div>
+                      <span
+                        className={
+                          passed
+                            ? 'badge-success'
+                            : isUpNext
+                            ? 'badge-warning'
+                            : 'badge-neutral'
+                        }
+                      >
+                        {passed ? 'Completed' : isUpNext ? 'Up next' : isLocked ? 'Locked' : ''}
+                      </span>
                     </div>
                   </li>
                 );
@@ -225,7 +258,12 @@ const Home: React.FC = () => {
           </div>
         </div>
 
-        {loading && <div className="mt-6 text-sm text-slate-500">Loading progress…</div>}
+        {loading && (
+          <div className="mt-6 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+            <span className="h-3.5 w-3.5 rounded-full border-2 border-slate-300 border-t-brand-500 animate-spin" />
+            Loading progress…
+          </div>
+        )}
       </div>
     </div>
   );

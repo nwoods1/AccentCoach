@@ -64,94 +64,84 @@ const Login = () => {
     <div>
       {userLoggedIn && (<Navigate to="/home" replace />)}
 
-      <main className="w-full h-screen flex items-center justify-center px-4">
-        <div className="w-full max-w-md text-gray-600 space-y-5 p-6 shadow-xl border rounded-xl bg-white dark:bg-slate-900 dark:text-slate-200 dark:border-slate-700">
+      <main className="min-h-screen w-full flex items-center justify-center px-4 py-10 bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-950 dark:to-slate-900">
+        <div className="w-full max-w-md space-y-6 card">
           {/* Brand header */}
           <div className="flex flex-col items-center text-center">
             <img
               src={Parrot}
               alt="Accent Coach logo"
-              className="h-24 w-16 mb-2 drop-shadow"
+              className="h-16 w-16 rounded-full object-cover object-top ring-2 ring-brand-400/70 shadow-sm mb-3"
               loading="eager"
             />
-            <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-slate-100">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
               Accent Coach
             </h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">Welcome back</p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Welcome back</p>
           </div>
 
-          <form onSubmit={onSubmit} className="space-y-5">
+          <form onSubmit={onSubmit} className="space-y-4">
             <div>
-              <label className="text-sm text-gray-600 dark:text-slate-300 font-bold">Email</label>
+              <label className="field-label">Email</label>
               <input
                 type="email"
                 autoComplete="email"
                 required
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setErrorMessage(''); }}
-                className="w-full mt-2 px-3 py-2 text-gray-700 dark:text-slate-100 bg-transparent outline-none border focus:border-yellow-600 shadow-sm rounded-lg transition duration-300 dark:border-slate-700"
+                className="input"
               />
             </div>
 
             <div>
-              <label className="text-sm text-gray-600 dark:text-slate-300 font-bold">Password</label>
+              <label className="field-label">Password</label>
               <input
                 type="password"
                 autoComplete="current-password"
                 required
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); setErrorMessage(''); }}
-                className="w-full mt-2 px-3 py-2 text-gray-700 dark:text-slate-100 bg-transparent outline-none border focus:border-yellow-600 shadow-sm rounded-lg transition duration-300 dark:border-slate-700"
+                className="input"
               />
             </div>
 
-            {errorMessage && <span className="block text-red-600 font-bold">{errorMessage}</span>}
+            {errorMessage && <div className="alert-danger">{errorMessage}</div>}
 
-            <button
-              type="submit"
-              disabled={isSigningIn}
-              className={`w-full px-4 py-2 text-white font-medium rounded-lg ${
-                isSigningIn ? 'bg-gray-300 cursor-not-allowed' : 'bg-yellow-600 hover:bg-yellow-700 hover:shadow-xl transition duration-300'
-              }`}
-            >
-              {isSigningIn ? 'Signing In...' : 'Sign In'}
+            <button type="submit" disabled={isSigningIn} className="btn-primary w-full">
+              {isSigningIn ? 'Signing In…' : 'Sign In'}
             </button>
           </form>
 
-          <p className="text-center text-sm">
+          <p className="text-center text-sm text-slate-600 dark:text-slate-400">
             Don&apos;t have an account?{' '}
-            <Link to="/register" className="hover:underline font-bold">Sign up</Link>
+            <Link to="/register" className="font-semibold text-brand-600 dark:text-brand-400 hover:underline">
+              Sign up
+            </Link>
           </p>
 
-          <div className="flex flex-row items-center w-full">
-            <div className="border-b mb-2.5 mr-2 w-full dark:border-slate-700" />
-            <div className="text-sm font-bold w-fit">OR</div>
-            <div className="border-b mb-2.5 ml-2 w-full dark:border-slate-700" />
+          <div className="divider-label">OR</div>
+
+          <div className="space-y-2">
+            <button
+              disabled={isSigningIn}
+              onClick={onGoogleSignIn}
+              className="btn-outline w-full"
+            >
+              {isSigningIn ? 'Signing In…' : 'Continue with Google'}
+            </button>
+
+            <button
+              disabled={isSigningIn}
+              onClick={onGuestSignIn}
+              className="btn-ghost w-full border border-slate-300 dark:border-slate-700"
+              title="Use the app without saving progress"
+            >
+              {isSigningIn ? 'Signing In…' : 'Continue as guest'}
+            </button>
           </div>
 
-          <button
-            disabled={isSigningIn}
-            onClick={onGoogleSignIn}
-            className={`w-full flex items-center justify-center gap-x-3 py-2.5 border rounded-lg text-sm font-medium ${
-              isSigningIn ? 'cursor-not-allowed' : 'hover:bg-gray-100 transition duration-300 active:bg-gray-100 dark:hover:bg-slate-800'
-            } dark:border-slate-700`}
-          >
-            {isSigningIn ? 'Signing In...' : 'Continue with Google'}
-          </button>
-
-          <button
-            disabled={isSigningIn}
-            onClick={onGuestSignIn}
-            className={`w-full mt-2 flex items-center justify-center gap-x-3 py-2.5 border rounded-lg text-sm font-medium ${
-              isSigningIn ? 'cursor-not-allowed' : 'hover:bg-gray-100 transition duration-300 active:bg-gray-100 dark:hover:bg-slate-800'
-            } dark:border-slate-700`}
-            title="Use the app without saving progress"
-          >
-            {isSigningIn ? 'Signing In...' : 'Continue as guest'}
-          </button>
-
-          <p className="text-center text-xs text-gray-500 dark:text-slate-400">
-            Guest mode won’t save your progress.
+          <p className="text-center text-xs text-slate-500 dark:text-slate-400">
+            Guest mode won&rsquo;t save your progress.
           </p>
         </div>
       </main>

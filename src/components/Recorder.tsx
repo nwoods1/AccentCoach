@@ -327,29 +327,18 @@ const Recorder = () => {
   const allDone = level === levelsTotal - 1 && status === 'pass';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-950 dark:to-slate-900 transition-colors">
-      {/* Top bar */}
-      <div className="max-w-4xl mx-auto px-4 pt-6 pb-2 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <img
-            src={Parrot}
-            alt="Accent Coach mascot"
-            className="h-14 md:h-40 w-auto drop-shadow"
-            loading="eager"
-          />
-          <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Accent Coach</h1>
-        </div>
-      </div>
-
-      {/* Card */}
-      <div className="max-w-2xl mx-auto px-4 pb-12">
-        <div className="card">
-          <p className="text-slate-600 dark:text-slate-300">
+    <div className="page">
+      <div className="page-container max-w-2xl">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Practice</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-0.5">
             Say the sentence exactly as shown. Pass to unlock the next level.
           </p>
+        </div>
 
+        <div className="card">
           {/* Progress */}
-          <div className="mt-6 flex items-center gap-2">
+          <div className="flex items-center gap-2">
             {SENTENCES.map((_, idx) => {
               const reached = idx < level || (idx === level && status !== 'idle');
               const passed = idx < level || (idx === level && status === 'pass');
@@ -357,7 +346,7 @@ const Recorder = () => {
                 <div
                   key={idx}
                   className={[
-                    'h-2 flex-1 rounded-full transition-colors',
+                    'h-1.5 flex-1 rounded-full transition-colors',
                     passed
                       ? 'bg-emerald-500'
                       : reached
@@ -372,13 +361,16 @@ const Recorder = () => {
 
           {/* Current level / sentence */}
           <div className="mt-6">
-            <div className="text-sm text-slate-500 dark:text-slate-400">
-              Level {level + 1} of {SENTENCES.length}
+            <div className="flex items-center justify-between">
+              <span className="badge-neutral">Level {level + 1} of {SENTENCES.length}</span>
+              <img
+                src={Parrot}
+                alt=""
+                aria-hidden
+                className="h-9 w-9 rounded-full object-cover object-top ring-1 ring-slate-200 dark:ring-slate-700"
+              />
             </div>
-            <div
-              className="mt-2 p-4 rounded-xl border bg-white/70 dark:bg-slate-900/50 backdrop-blur
-                          border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
-            >
+            <div className="panel mt-3 p-4 text-slate-900 dark:text-slate-100">
               <span className="font-semibold">Say:</span>{' '}
               <span className="italic">“{currentSentence}”</span>
             </div>
@@ -404,16 +396,21 @@ const Recorder = () => {
               <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Playback</h3>
               <audio className="w-full" controls src={audioURL}></audio>
 
-              {loading && <div className="mt-3 text-sm text-slate-500">Analyzing…</div>}
+              {loading && (
+                <div className="mt-3 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                  <span className="h-3.5 w-3.5 rounded-full border-2 border-slate-300 border-t-brand-500 animate-spin" />
+                  Analyzing…
+                </div>
+              )}
 
               {!loading && result && (
                 <div
                   className={[
                     'mt-4 border rounded-xl p-4 text-center',
                     status === 'pass'
-                      ? 'bg-emerald-50 border-emerald-200 text-emerald-900 dark:bg-emerald-900/30 dark:border-emerald-700 dark:text-emerald-200'
+                      ? 'bg-emerald-50 border-emerald-200 text-emerald-900 dark:bg-emerald-900/20 dark:border-emerald-800/60 dark:text-emerald-200'
                       : status === 'fail'
-                      ? 'bg-rose-50 border-rose-200 text-rose-900 dark:bg-rose-900/30 dark:border-rose-700 dark:text-rose-200'
+                      ? 'bg-rose-50 border-rose-200 text-rose-900 dark:bg-rose-900/20 dark:border-rose-800/60 dark:text-rose-200'
                       : 'bg-slate-50 border-slate-200 text-slate-900 dark:bg-slate-900/50 dark:border-slate-700 dark:text-slate-100',
                   ].join(' ')}
                 >
@@ -423,7 +420,7 @@ const Recorder = () => {
                       className={
                         status === 'pass'
                           ? 'text-emerald-700 dark:text-emerald-300'
-                          : 'text-indigo-700 dark:text-indigo-300'
+                          : 'text-rose-700 dark:text-rose-300'
                       }
                     >
                       {result}

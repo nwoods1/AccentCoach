@@ -10,7 +10,16 @@ import Home from './components/Home'
 
 function Protected({ children }: { children: JSX.Element }) {
   const { userLoggedIn, loading } = useAuth();
-  if (loading) return <div className="p-6">Loading…</div>;
+  if (loading) {
+    return (
+      <div className="page flex items-center justify-center">
+        <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm">
+          <span className="h-4 w-4 rounded-full border-2 border-slate-300 border-t-brand-500 animate-spin" />
+          Loading…
+        </div>
+      </div>
+    );
+  }
   return userLoggedIn ? children : <Navigate to="/login" replace />;
 }
 
@@ -23,7 +32,7 @@ export default function App() {
     <>
       {userLoggedIn && !onAuthPage && <Header />}
 
-      <div className={userLoggedIn && !onAuthPage ? 'pt-12' : ''}>
+      <div className={userLoggedIn && !onAuthPage ? 'pt-16' : ''}>
         <Routes>
            <Route path="/" element={userLoggedIn ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
@@ -36,12 +45,10 @@ export default function App() {
 
           <Route path="/practice" element={
             <Protected>
-              <div className="max-w-3xl mx-auto p-4">
-                <Recorder />
-              </div>
+              <Recorder />
             </Protected>
           } />
-          
+
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route
             path="/analyze"
